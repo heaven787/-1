@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星空生日祝福</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap');
+        
+        :root {
+            --primary-color: #66afff;
+            --secondary-color: #a1c4fd;
+            --text-color: #c9d6ff;
+            --dark-bg: rgba(0, 0, 30, 0.7);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            font-family: 'ZCOOL XiaoWei', serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            perspective: 1000px;
+            transition: all 0.5s ease;
+        }
+        
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: all 1s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scene.hidden {
+            opacity: 0;
+            transform: translateY(-50px);
+            pointer-events: none;
+        }
+        
+        #name-scene {
+            z-index: 20;
+        }
+        
+        #main-scene {
+            z-index: 10;
+        }
+        
+        #wish-scene {
+            z-index: 5;
+            opacity: 0;
+        }
+        
+        #wish-scene.visible {
+            opacity: 1;
+            z-index: 15;
+        }
+        
+        .container {
+            text-align: center;
+            position: relative;
+            background: var(--dark-bg);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(102, 175, 255, 0.2);
+            border: 1px solid rgba(102, 175, 255, 0.1);
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            max-width: 80%;
+            width: 500px;
+        }
+        
+        .container:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+            box-shadow: 0 0 50px rgba(102, 175, 255, 0.4);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-family: 'Ma Shan Zheng', cursive;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(102, 175, 255, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        h1:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .message {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+        
+        .name-input {
+            margin: 20px 0;
+            padding: 15px;
+            width: 80%;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(102, 175, 255, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'ZCOOL XiaoWei', serif;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(102, 175, 255, 0.3);
+            border-color: var(--primary-color);
+        }
+        
+        .name-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .button {
+            background: linear-gradient(to right, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.2rem;
+            margin: 20px 2px;
+            cursor: pointer;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'ZCOOL XiaoWei', serif;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--secondary-color) 0%, var(--primary-color) 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 242, 254, 0.5);
+        }
+        
+        .button:hover::before {
+            opacity: 1;
+        }
+        
+        /* 星空元素 */
+        .moon {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(245, 247, 250, 0.4);
+            z-index: 5;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 0, 30, 0.3);
+            border-radius: 50%;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        
+        .constellation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px #fff;
+            opacity: 0;
+            z-index: 3;
+        }
+        
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -50px;
+            width: 50px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #fff);
+            transform: translateY(-50%);
+        }
+        
+        /* 愿望卡片 */
+        .wish-card {
+            background: linear-gradient(135deg, rgba(16, 36, 70, 0.9) 0%, rgba(0, 10, 30, 0.95) 100%);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(102, 175, 255, 0.3);
+            margin: 20px 0;
+            max-width: 80%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wish-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 175, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: 0;
+        }
+        
+        .wish-text {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .wish-name {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* 动画 */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes shooting {
+            0% { transform: translate(0, 0) rotate(-30deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translate(500px, 250px) rotate(-30deg); opacity: 0; }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 流星雨容器 */
+        .meteor-shower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+        
+        /* 星座元素 */
+        .constellation-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        .constellation-line {
+            position: absolute;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            transform-origin: left center;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px #fff; }
+            100% { transform: scale(1.1); box-shadow: 0 0 20px #fff; }
+        }
+        
+        /* 特殊效果 */
+        .celebration-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 30;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            opacity: 0;
+            animation: fadeInOut 3s ease-out;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 星座选择样式 */
+        .zodiac-select {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .zodiac-option {
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .zodiac-option:hover {
+            background: rgba(102, 175, 255, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .zodiac-option.selected {
+            background: rgba(102, 175, 255, 0.3);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(102, 175, 255, 0.3);
+        }
+        
+        .zodiac-option img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 5px;
+        }
+        
+        .zodiac-option span {
+            display: block;
+            font-size: 0.9rem;
+        }
+        
+        /* 倒计时样式 */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .countdown-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .countdown-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* 游戏区域 */
+        .game-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 25;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .game-area.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .game-container {
+            background: var(--dark-bg);
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        .game-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .game-instructions {
+            margin-bottom: 20px;
+        }
+        
+        .game-board {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+            border: 1px solid rgba(102, 175, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .game-star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .game-line {
+            position: absolute;
+            height: 2px;
+            background: var(--primary-color);
+            transform-origin: left center;
+            z-index: 1;
+        }
+        
+        .close-game {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* 3D星空容器 */
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .message {
+                font-size: 1.2rem;
+            }
+            
+            .zodiac-select {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 3D星空容器 -->
+    <div id="three-container"></div>
+    
+    <!-- 星空背景元素 -->
+    <div class="stars" id="stars"></div>
+    <div class="constellation" id="constellation"></div>
+    <div class="meteor-shower" id="meteor-shower"></div>
+    <div class="moon"></div>
+    
+    <!-- 名字输入场景 -->
+    <div class="scene" id="name-scene">
+        <div class="container">
+            <h1>星空生日祝福</h1>
+            <div class="message">请输入寿星的名字，开启星空祝福</div>
+            <input type="text" class="name-input" id="name-input" placeholder="寿星的名字" autofocus>
+            <div class="message">选择寿星的星座</div>
+            <div class="zodiac-select" id="zodiac-select">
+                <!-- 星座选项将通过JS动态生成 -->
+            </div>
+            <div class="message">选择生日日期</div>
+            <input type="date" class="name-input" id="birthday-date">
+            <button class="button" id="name-submit">开启星空祝福</button>
+        </div>
+    </div>
+    
+    <!-- 主祝福场景 -->
+    <div class="scene hidden" id="main-scene">
+        <div class="container">
+            <h1 id="birthday-title">生日快乐</h1>
+            <div class="message" id="birthday-message">
+                在这璀璨星空下，<br>
+                愿你的梦想如星辰般闪耀！
+            </div>
+            <div id="countdown-display" class="countdown hidden"></div>
+            <div id="zodiac-info" class="wish-card hidden">
+                <div class="wish-text">
+                    <span id="zodiac-name"></span>座贺辞：<br>
+                    <span id="zodiac-fortune"></span>
+                </div>
+            </div>
+            <div class="wish-card">
+                <div class="wish-text">
+                    亲爱的<span class="wish-name" id="display-name">朋友</span>，<br>
+                    请对着星空许下你的生日愿望...
+                </div>
+            </div>
+            <input type="text" class="name-input" id="wish-input" placeholder="写下你的生日愿望...">
+            <button class="button" id="wish-submit">许下愿望</button>
+            <!-- <button class="button" id="play-game-btn">玩星空游戏</button> -->
+        </div>
+    </div>
+    
+    <!-- 愿望实现场景 -->
+    <div class="scene" id="wish-scene">
+        <div class="container">
+            <h1>愿望已送达星空</h1>
+            <div class="message">
+                你的愿望<span class="wish-name" id="wish-content"></span><br>
+                已随流星飞向宇宙深处...
+            </div>
+            <div class="wish-card">
+                <div class="wish-text">
+                    亲爱的<span class="wish-name" id="wish-name"></span>，<br>
+                    星空已收到你的心愿，<br>
+                    愿所有美好如期而至！
+                </div>
+            </div>
+            <button class="button" id="back-button">返回星空</button>
+        </div>
+    </div>
+    
+    <!-- 游戏区域 -->
+    <div class="game-area" id="game-area">
+        <div class="game-container">
+            <button class="close-game" id="close-game">×</button>
+            <h2 class="game-title">星空连线游戏</h2>
+            <div class="game-instructions">
+                点击星星将它们连接起来，创造属于你的星座图案！<br>
+                至少连接3颗星星才能形成星座。
+            </div>
+            <div class="game-board" id="game-board"></div>
+            <button class="button" id="new-game">重新开始</button>
+        </div>
+    </div>
+    
+    <!-- 引入Three.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script>
+        // 星座数据
+        let k=0;
+        const zodiacData = [
+            { name: "白羊座", date: "3.21-4.19", symbol: "♈", fortune: "白羊座为你送上祝福：愿你的热情如烈火般永不熄灭，勇气照亮前路！" },
+            { name: "金牛座", date: "4.20-5.20", symbol: "♉", fortune: "金牛座为你祈愿：愿你的坚持如大地般稳固，收获丰硕果实！" },
+            { name: "双子座", date: "5.21-6.21", symbol: "♊", fortune: "双子座为你歌唱：愿你的生活充满欢声笑语，智慧如星光闪烁！" },
+            { name: "巨蟹座", date: "6.22-7.22", symbol: "♋", fortune: "巨蟹座为你祝福：愿你的家庭温暖如春，情感如月光般温柔！" },
+            { name: "狮子座", date: "7.23-8.22", symbol: "♌", fortune: "狮子座为你呐喊：愿你的光芒如太阳般耀眼，自信照亮人生！" },
+            { name: "处女座", date: "8.23-9.22", symbol: "♍", fortune: "处女座为你祈祷：愿你的生活精致完美，细节中见真章！" },
+            { name: "天秤座", date: "9.23-10.23", symbol: "♎", fortune: "天秤座为你祈愿：愿你的人生永远平衡美好，公正如星辰运转！" },
+            { name: "天蝎座", date: "10.24-11.21", symbol: "♏", fortune: "天蝎座为你送上祝福：愿你的洞察力如深渊般深邃，神秘而强大！" },
+            { name: "射手座", date: "11.22-12.21", symbol: "♐", fortune: "射手座为你欢呼：愿你的旅途充满惊喜，自由如风般翱翔！" },
+            { name: "摩羯座", date: "12.22-1.19", symbol: "♑", fortune: "摩羯座为你承诺：愿你的努力如山峰般坚定，终将触摸星空！" },
+            { name: "水瓶座", date: "1.20-2.18", symbol: "♒", fortune: "水瓶座为你祈愿：愿你的创意如清泉涌流，思想如宇宙般广阔！" },
+            { name: "双鱼座", date: "2.19-3.20", symbol: "♓", fortune: "双鱼座为你祝福：愿你的梦想如海洋般浩瀚，情感如诗歌般美丽！" }
+        ];
+
+        // 创建星星
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const count = 300;
+            
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.opacity = Math.random() * 0.5 + 0.1;
+                star.style.setProperty('--duration', Math.random() * 5 + 3 + 's');
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // 创建星座
+        function createConstellation() {
+            const constellationContainer = document.getElementById('constellation');
+            const dotCount = 12;
+            const dots = [];
+            
+            // 创建星座点
+            for (let i = 0; i < dotCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'constellation-dot';
+                dot.style.left = Math.random() * 80 + 10 + 'vw';
+                dot.style.top = Math.random() * 60 + 20 + 'vh';
+                dot.style.animationDelay = Math.random() * 2 + 's';
+                constellationContainer.appendChild(dot);
+                dots.push(dot);
+            }
+            
+            // 创建星座连线
+            for (let i = 0; i < dotCount - 1; i++) {
+                for (let j = i + 1; j < Math.min(i + 3, dotCount); j++) {
+                    if (Math.random() > 0.3) {
+                        const line = document.createElement('div');
+                        line.className = 'constellation-line';
+                        
+                        const dot1 = dots[i];
+                        const dot2 = dots[j];
+                        
+                        const rect1 = dot1.getBoundingClientRect();
+                        const rect2 = dot2.getBoundingClientRect();
+                        
+                        const x1 = rect1.left + rect1.width / 2;
+                        const y1 = rect1.top + rect1.height / 2;
+                        const x2 = rect2.left + rect2.width / 2;
+                        const y2 = rect2.top + rect2.height / 2;
+                        
+                        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                        
+                        line.style.width = length + 'px';
+                        line.style.left = x1 + 'px';
+                        line.style.top = y1 + 'px';
+                        line.style.transform = `rotate(${angle}deg)`;
+                        
+                        constellationContainer.appendChild(line);
+                    }
+                }
+            }
+        }
+        
+        // 创建流星
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.className = 'shooting-star';
+            meteor.style.left = Math.random() * 100 + 'vw';
+            meteor.style.top = Math.random() * 30 + 'vh';
+            meteor.style.animation = `shooting ${Math.random() * 2 + 1}s linear forwards`;
+            document.getElementById('meteor-shower').appendChild(meteor);
+            
+            setTimeout(() => {
+                meteor.remove();
+            }, 2000);
+        }
+        
+        // 创建流星雨
+        function createMeteorShower(count = 10, delay = 200) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    createMeteor();
+                }, i * delay);
+            }
+        }
+        
+        // 创建庆祝效果
+        function createCelebrationEffect(text) {
+            const effect = document.createElement('div');
+            effect.className = 'celebration-effect';
+            effect.textContent = text;
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.remove();
+            }, 3000);
+        }
+        
+        // 切换场景
+        function switchScene(from, to) {
+            from.classList.add('hidden');
+            setTimeout(() => {
+                to.classList.remove('hidden');
+                if (to.id === 'wish-scene') {
+                    to.classList.add('visible');
+                }
+            }, 500);
+        }
+        
+        // 初始化3D星空
+        function init3DStars() {
+            const container = document.getElementById('three-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            // 创建场景
+            const scene = new THREE.Scene();
+            
+            // 创建相机
+            const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // 创建渲染器
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(width, height);
+            container.appendChild(renderer.domElement);
+            
+            // 创建星星
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.1,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const starsVertices = [];
+            for (let i = 0; i < 1000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starsVertices.push(x, y, z);
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+            
+            // 动画循环
+            function animate() {
+                requestAnimationFrame(animate);
+                stars.rotation.x += 0.0001;
+                stars.rotation.y += 0.0001;
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // 窗口大小调整
+            window.addEventListener('resize', () => {
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+        }
+        
+        // 初始化星座选择
+        function initZodiacSelect() {
+            const zodiacSelect = document.getElementById('zodiac-select');
+            
+            zodiacData.forEach((zodiac, index) => {
+                const option = document.createElement('div');
+                option.className = 'zodiac-option';
+                option.dataset.index = index;
+                option.innerHTML = `
+                    <div>${zodiac.symbol}</div>
+                    <span>${zodiac.name}</span>
+                    <span>${zodiac.date}</span>
+                `;
+                
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.zodiac-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+                
+                zodiacSelect.appendChild(option);
+            });
+        }
+        
+        // 初始化倒计时
+        function initCountdown(birthdayDate) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            let nextBirthday = new Date(birthdayDate);
+            nextBirthday.setFullYear(currentYear);
+            
+            // 如果生日已经过了今年，设置为明年
+            if (nextBirthday < now) {
+                nextBirthday.setFullYear(currentYear + 1);
+            }
+            
+            const countdownDisplay = document.getElementById('countdown-display');
+            
+            function updateCountdown() {
+                const now = new Date();
+                const diff = nextBirthday - now;
+                
+                if (diff <= 0) {
+                    countdownDisplay.innerHTML = '<div class="message">今天是你的生日！生日快乐！</div>';
+                    return;
+                }
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                countdownDisplay.innerHTML = `
+                    <div class="message">距离生日还有：</div>
+                    <div class="countdown">
+                        <div class="countdown-item">
+                            <div class="countdown-number">${days}</div>
+                            <div class="countdown-label">天</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number">${hours}</div>
+                            <div class="countdown-label">小时</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number">${minutes}</div>
+                            <div class="countdown-label">分钟</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number">${seconds}</div>
+                            <div class="countdown-label">秒</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            updateCountdown();
+            countdownDisplay.classList.remove('hidden');
+            setInterval(updateCountdown, 1000);
+        }
+        
+        // 初始化游戏
+       function initGame() {
+            const gameBoard = document.getElementById('game-board');
+            const gameArea = document.getElementById('game-area');
+            const closeGame = document.getElementById('close-game');
+            const newGameBtn = document.getElementById('new-game');
+            // const playGameBtn = document.getElementById('play-game-btn');
+            
+            let stars = [];
+            let lines = [];
+            let selectedStars = [];
+            
+            // 创建新游戏
+            function createNewGame() {
+                // 清空游戏板
+                gameBoard.innerHTML = '';
+                stars = [];
+                lines = [];
+                selectedStars = [];
+                
+                // 创建星星
+                for (let i = 0; i < 10; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'game-star';
+                    star.dataset.index = i;
+                    
+                    // 随机位置，确保不会太靠近边缘
+                    const x = Math.random() * 80 + 10;
+                    const y = Math.random() * 80 + 10;
+                    
+                    star.style.left = `${x}%`;
+                    star.style.top = `${y}%`;
+                    
+                    star.addEventListener('click', handleStarClick);
+                    
+                    gameBoard.appendChild(star);
+                    stars.push({
+                        element: star,
+                        x: x,
+                        y: y
+                    });
+                }
+            }
+            
+            // 处理星星点击
+            function handleStarClick(e) {
+                const index = parseInt(e.target.dataset.index);
+                
+                // 如果已经选中，取消选中
+                const selectedIndex = selectedStars.indexOf(index);
+                if (selectedIndex !== -1) {
+                    selectedStars.splice(selectedIndex, 1);
+                    e.target.style.background = '#fff';
+                    
+                    // 移除相关的线
+                    lines = lines.filter(line => {
+                        const keep = !(line.from === index || line.to === index);
+                        if (!keep) {
+                            line.element.remove();
+                        }
+                        return keep;
+                    });
+                    
+                    return;
+                }
+                
+                // 选中星星
+                selectedStars.push(index);
+                e.target.style.background = 'var(--primary-color)';
+                
+                // 如果选中了至少2颗星星，画线
+                if (selectedStars.length >= 2) {
+                    const fromIndex = selectedStars[selectedStars.length - 2];
+                    const toIndex = selectedStars[selectedStars.length - 1];
+                    
+                    drawLine(fromIndex, toIndex);
+                }
+                
+                // 如果选中了3颗或更多星星，检查是否形成闭合图形
+                if (selectedStars.length >= 3) {
+                    // 检查最后三个点是否形成闭合图形
+                    const lastThree = selectedStars.slice(-3);
+                    if (lastThree[0] === lastThree[2]) {
+                        createCelebrationEffect('✨');
+                    }
+                }
+            }
+            
+            // 画线
+            function drawLine(fromIndex, toIndex) {
+                const fromStar = stars[fromIndex];
+                const toStar = stars[toIndex];
+                
+                const line = document.createElement('div');
+                line.className = 'game-line';
+                
+                const fromX = fromStar.x * gameBoard.clientWidth / 100;
+                const fromY = fromStar.y * gameBoard.clientHeight / 100;
+                const toX = toStar.x * gameBoard.clientWidth / 100;
+                const toY = toStar.y * gameBoard.clientHeight / 100;
+                
+                const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+                const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+                
+                line.style.width = `${length}px`;
+                line.style.left = `${fromX}px`;
+                line.style.top = `${fromY}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                gameBoard.appendChild(line);
+                
+                lines.push({
+                    element: line,
+                    from: fromIndex,
+                    to: toIndex
+                });
+            }
+            
+            // 打开游戏
+            // playGameBtn.addEventListener('click', function() {
+            //     gameArea.classList.add('active');
+            //     createNewGame();
+            // });
+            
+            // 关闭游戏
+            closeGame.addEventListener('click', function() {
+                gameArea.classList.remove('active');
+            });
+            
+            // 新游戏
+            newGameBtn.addEventListener('click', createNewGame);
+        }
+        
+        // 初始化
+        window.onload = function() {
+            createStars();
+            createConstellation();
+            init3DStars();
+            initZodiacSelect();
+            initGame();
+            
+            // 初始流星
+            createMeteorShower(3, 1000);
+            
+            // 持续生成流星
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createMeteor();
+                }
+            }, 3000);
+            
+            // 名字提交
+            document.getElementById('name-submit').addEventListener('click', function() {
+                
+                
+                
+                
+                const name = document.getElementById('name-input').value.trim();
+                const selectedZodiac = document.querySelector('.zodiac-option.selected');
+                const birthdayDate = document.getElementById('birthday-date').value;
+                
+                if (!name) {
+                    alert('请输入寿星的名字哦！');
+                    return;
+                }
+                
+                if (!selectedZodiac) {
+                    alert('请选择寿星的星座！');
+                    return;
+                }
+                
+                if (!birthdayDate) {
+                    alert('请选择生日日期！');
+                    return;
+                }
+                else  if(k==0){
+                    const audio = new Audio('配乐.mp3');
+                audio.play();
+                k+=1;}
+                // 更新主场景内容
+                document.getElementById('birthday-title').textContent = `${name}，生日快乐`;
+                document.getElementById('display-name').textContent = name;
+                document.getElementById('birthday-message').innerHTML = `
+                    ${name}，在这璀璨星空下，<br>
+                    愿你的梦想如星辰般闪耀！
+                `;
+                
+                // 显示星座信息
+                const zodiacIndex = selectedZodiac.dataset.index;
+                const zodiac = zodiacData[zodiacIndex];
+                document.getElementById('zodiac-name').textContent = zodiac.name;
+                document.getElementById('zodiac-fortune').textContent = zodiac.fortune;
+                document.getElementById('zodiac-info').classList.remove('hidden');
+                
+                // 初始化倒计时
+                initCountdown(birthdayDate);
+                
+                // 切换场景
+                switchScene(
+                    document.getElementById('name-scene'),
+                    document.getElementById('main-scene')
+                );
+                
+                // 庆祝效果
+                createCelebrationEffect('✨');
+                createMeteorShower(5, 300);
+            });
+            
+            // 愿望提交
+            document.getElementById('wish-submit').addEventListener('click', makeAWish);
+            document.getElementById('wish-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    makeAWish();
+                }
+            });
+            
+            // 返回按钮
+            document.getElementById('back-button').addEventListener('click', function() {
+                alert("本web结束了，fzudpj祝你生日快乐，生活幸福！");
+                document.getElementById('wish-scene').classList.remove('visible');
+                setTimeout(() => {
+                    document.getElementById('wish-input').value = '';
+                    document.getElementById('wish-input').focus();
+                }, 500);
+            });
+            
+            // 鼠标跟随星星
+            document.addEventListener('mousemove', function(e) {
+                if (Math.random() > 0.9) {
+                    const spark = document.createElement('div');
+                    spark.className = 'star';
+                    spark.style.left = e.pageX + 'px';
+                    spark.style.top = e.pageY + 'px';
+                    spark.style.width = '2px';
+                    spark.style.height = '2px';
+                    spark.style.opacity = '0.8';
+                    spark.style.animation = 'twinkle 1s forwards';
+                    document.getElementById('stars').appendChild(spark);
+                    
+                    setTimeout(() => {
+                        spark.remove();
+                    }, 1000);
+                }
+            });
+        };
+        
+        // 许愿函数
+        function makeAWish() {
+            const wish = document.getElementById('wish-input').value.trim();
+            if (wish) {
+                // 更新愿望场景内容
+                const name = document.getElementById('display-name').textContent;
+                document.getElementById('wish-content').textContent = `"${wish}"`;
+                document.getElementById('wish-name').textContent = name;
+                
+                // 切换场景
+                switchScene(
+                    document.getElementById('main-scene'),
+                    document.getElementById('wish-scene')
+                );
+                
+                // 特效
+                createCelebrationEffect('🌠');
+                createMeteorShower(15, 150);
+                
+                // 播放音效
+                // const audio = new Audio('配乐.mp3');
+                // audio.play().catch(e => console.log('音效播放失败'));
+            } else {
+                alert('请先输入你的愿望哦！');
+            }
+        }
+    </script>
+</body>
+</html>

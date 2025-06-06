@@ -1,0 +1,549 @@
+
+        @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap');
+        
+        :root {
+            --primary-color: #66afff;
+            --secondary-color: #a1c4fd;
+            --text-color: #c9d6ff;
+            --dark-bg: rgba(0, 0, 30, 0.7);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            font-family: 'ZCOOL XiaoWei', serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            perspective: 1000px;
+            transition: all 0.5s ease;
+        }
+        
+        .scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: all 1s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .scene.hidden {
+            opacity: 0;
+            transform: translateY(-50px);
+            pointer-events: none;
+        }
+        
+        #name-scene {
+            z-index: 20;
+        }
+        
+        #main-scene {
+            z-index: 10;
+        }
+        
+        #wish-scene {
+            z-index: 5;
+            opacity: 0;
+        }
+        
+        #wish-scene.visible {
+            opacity: 1;
+            z-index: 15;
+        }
+        
+        .container {
+            text-align: center;
+            position: relative;
+            background: var(--dark-bg);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(102, 175, 255, 0.2);
+            border: 1px solid rgba(102, 175, 255, 0.1);
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            max-width: 80%;
+            width: 500px;
+        }
+        
+        .container:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+            box-shadow: 0 0 50px rgba(102, 175, 255, 0.4);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-family: 'Ma Shan Zheng', cursive;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(102, 175, 255, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        h1:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .message {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+        
+        .name-input {
+            margin: 20px 0;
+            padding: 15px;
+            width: 80%;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(102, 175, 255, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'ZCOOL XiaoWei', serif;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(102, 175, 255, 0.3);
+            border-color: var(--primary-color);
+        }
+        
+        .name-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .button {
+            background: linear-gradient(to right, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.2rem;
+            margin: 20px 2px;
+            cursor: pointer;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'ZCOOL XiaoWei', serif;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--secondary-color) 0%, var(--primary-color) 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 242, 254, 0.5);
+        }
+        
+        .button:hover::before {
+            opacity: 1;
+        }
+        
+        /* 星空元素 */
+        .moon {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(245, 247, 250, 0.4);
+            z-index: 5;
+            animation: float 6s infinite ease-in-out;
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 0, 30, 0.3);
+            border-radius: 50%;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        
+        .constellation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px #fff;
+            opacity: 0;
+            z-index: 3;
+        }
+        
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -50px;
+            width: 50px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #fff);
+            transform: translateY(-50%);
+        }
+        
+        /* 愿望卡片 */
+        .wish-card {
+            background: linear-gradient(135deg, rgba(16, 36, 70, 0.9) 0%, rgba(0, 10, 30, 0.95) 100%);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(102, 175, 255, 0.3);
+            margin: 20px 0;
+            max-width: 80%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wish-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 175, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: 0;
+        }
+        
+        .wish-text {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .wish-name {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* 动画 */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes shooting {
+            0% { transform: translate(0, 0) rotate(-30deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translate(500px, 250px) rotate(-30deg); opacity: 0; }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 流星雨容器 */
+        .meteor-shower {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+        
+        /* 星座元素 */
+        .constellation-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        .constellation-line {
+            position: absolute;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            transform-origin: left center;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px #fff; }
+            100% { transform: scale(1.1); box-shadow: 0 0 20px #fff; }
+        }
+        
+        /* 特殊效果 */
+        .celebration-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 30;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            opacity: 0;
+            animation: fadeInOut 3s ease-out;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 星座选择样式 */
+        .zodiac-select {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .zodiac-option {
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .zodiac-option:hover {
+            background: rgba(102, 175, 255, 0.2);
+            border-color: var(--primary-color);
+        }
+        
+        .zodiac-option.selected {
+            background: rgba(102, 175, 255, 0.3);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(102, 175, 255, 0.3);
+        }
+        
+        .zodiac-option img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 5px;
+        }
+        
+        .zodiac-option span {
+            display: block;
+            font-size: 0.9rem;
+        }
+        
+        /* 倒计时样式 */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .countdown-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .countdown-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* 游戏区域 */
+        .game-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 25;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .game-area.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .game-container {
+            background: var(--dark-bg);
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        .game-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .game-instructions {
+            margin-bottom: 20px;
+        }
+        
+        .game-board {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+            border: 1px solid rgba(102, 175, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .game-star {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .game-line {
+            position: absolute;
+            height: 2px;
+            background: var(--primary-color);
+            transform-origin: left center;
+            z-index: 1;
+        }
+        
+        .close-game {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* 3D星空容器 */
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .message {
+                font-size: 1.2rem;
+            }
+            
+            .zodiac-select {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
